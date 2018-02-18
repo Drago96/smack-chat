@@ -1,9 +1,11 @@
-package com.dragomirproychev.smack
+package com.dragomirproychev.smack.Controller
 
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import com.dragomirproychev.smack.R
+import com.dragomirproychev.smack.Services.AuthService
 import kotlinx.android.synthetic.main.activity_create_user.*
 import java.util.*
 
@@ -29,7 +31,8 @@ class CreateUserActivity : AppCompatActivity() {
             "dark$avatar"
         }
 
-        val resourceId = resources.getIdentifier(userAvatar,"drawable",packageName)
+        val resourceId = resources.getIdentifier(userAvatar,
+                "drawable",packageName)
 
         createAvatarImageView.setImageResource(resourceId)
     }
@@ -49,6 +52,10 @@ class CreateUserActivity : AppCompatActivity() {
     }
 
     fun createUserButtonClicked(view: View){
+        AuthService.registerUser(this,
+               createEmailText.text.toString(),
+                createPasswordText.text.toString()) {
 
+        }
     }
 }
