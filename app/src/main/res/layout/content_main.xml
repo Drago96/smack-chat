@@ -29,7 +29,7 @@
         android:hint="message:"
         android:inputType="textMultiLine"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/sendMessageButton"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
@@ -38,11 +38,12 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
         android:background="@android:color/transparent"
         android:onClick="sendMessageButtonClicked"
         android:tint="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/messageTextField"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/messageTextField"
         app:srcCompat="@drawable/ic_menu_send" />
 
