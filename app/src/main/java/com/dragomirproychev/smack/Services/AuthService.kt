@@ -12,6 +12,7 @@ import com.dragomirproychev.smack.Utilities.URL_REGISTER
 import org.json.JSONException
 import org.json.JSONObject
 
+
 object AuthService {
 
     var isLoggedIn = false

@@ -1,10 +1,12 @@
 package com.dragomirproychev.smack.Controller
 
+import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import com.dragomirproychev.smack.R
+import com.dragomirproychev.smack.Utilities.REQUEST_EXIT
 
 class LoginActivity : AppCompatActivity() {
 
@@ -20,6 +22,14 @@ class LoginActivity : AppCompatActivity() {
     fun loginCreateUserButtonClicked(view: View){
         val createUserIntent = Intent(this,
                 CreateUserActivity:: class.java)
-        startActivity(createUserIntent)
+        startActivityForResult(createUserIntent, REQUEST_EXIT)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(requestCode == REQUEST_EXIT){
+            if(resultCode == RESULT_OK){
+                finish()
+            }
+        }
     }
 }
