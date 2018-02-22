@@ -11,7 +11,7 @@ object UserDataService {
     var email = ""
     var color = ""
 
-    fun logout(){
+    fun logout() {
         id = ""
         name = ""
         avatarColor = ""
@@ -23,10 +23,10 @@ object UserDataService {
         AuthService.isLoggedIn = false
     }
 
-    fun returnAvatarColor(components: String) : Int{
-        val strippedColor = components.replace("[","")
-                .replace("]","")
-                .replace(",","")
+    fun returnAvatarColor(components: String): Int {
+        val strippedColor = components.replace("[", "")
+                .replace("]", "")
+                .replace(",", "")
 
         var r = 0
         var g = 0
@@ -34,13 +34,13 @@ object UserDataService {
 
         val scanner = Scanner(strippedColor)
 
-        if(scanner.hasNext()){
+        if (scanner.hasNext()) {
             r = (scanner.nextDouble() * 255).toInt()
             g = (scanner.nextDouble() * 255).toInt()
             b = (scanner.nextDouble() * 255).toInt()
         }
 
-        return Color.rgb(r,g,b)
+        return Color.rgb(r, g, b)
     }
 
 }

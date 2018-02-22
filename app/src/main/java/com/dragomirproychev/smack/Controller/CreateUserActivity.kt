@@ -11,6 +11,7 @@ import android.widget.Toast
 import com.dragomirproychev.smack.R
 import com.dragomirproychev.smack.Services.AuthService
 import com.dragomirproychev.smack.Utilities.BROADCAST_USER_DATA_CHANGE
+import com.dragomirproychev.smack.Utilities.RESULT_FINISH
 import kotlinx.android.synthetic.main.activity_create_user.*
 import java.util.*
 
@@ -27,28 +28,28 @@ class CreateUserActivity : AppCompatActivity() {
         createSpinner.visibility = View.INVISIBLE
     }
 
-    fun generateUserAvatar(view: View){
+    fun generateUserAvatar(view: View) {
         val color = random.nextInt(2)
         val avatar = random.nextInt(28)
 
-        userAvatar = if(color == 0) {
+        userAvatar = if (color == 0) {
             "light$avatar"
         } else {
             "dark$avatar"
         }
 
         val resourceId = resources.getIdentifier(userAvatar,
-                "drawable",packageName)
+                "drawable", packageName)
 
         createAvatarImageView.setImageResource(resourceId)
     }
 
-    fun generateColorClicked(view: View){
+    fun generateColorClicked(view: View) {
         val r = random.nextInt(255)
         val g = random.nextInt(255)
         val b = random.nextInt(255)
 
-        createAvatarImageView.setBackgroundColor(Color.rgb(r,g,b))
+        createAvatarImageView.setBackgroundColor(Color.rgb(r, g, b))
 
         val savedR = r.toDouble() / 255;
         val savedG = g.toDouble() / 255;
@@ -57,35 +58,35 @@ class CreateUserActivity : AppCompatActivity() {
         avatarColor = "[$savedR, $savedG, $savedB, 1]"
     }
 
-    fun createUserButtonClicked(view: View){
+    fun createUserButtonClicked(view: View) {
         enableSpinner(true)
         val userName = createUserUserNameText.text.toString()
         val email = createEmailText.text.toString()
         val password = createPasswordText.text.toString()
 
-        if(userName.isEmpty() || email.isEmpty() ||
-                password.isEmpty()){
-            Toast.makeText(this,"Make sure username, email and password are filled in.", Toast.LENGTH_SHORT).show()
+        if (userName.isEmpty() || email.isEmpty() ||
+                password.isEmpty()) {
+            Toast.makeText(this, "Make sure username, email and password are filled in.", Toast.LENGTH_SHORT).show()
             enableSpinner(false)
             return
         }
 
         AuthService.registerUser(this,
                 email,
-                password) {registerSuccess ->
-            if(registerSuccess){
+                password) { registerSuccess ->
+            if (registerSuccess) {
                 AuthService.loginUser(this, email,
-                        password){loginSuccess ->
-                    if(loginSuccess){
-                        AuthService.createUser(this, userName, email, userAvatar, avatarColor) {createSuccess ->
-                            if(createSuccess){
+                        password) { loginSuccess ->
+                    if (loginSuccess) {
+                        AuthService.createUser(this, userName, email, userAvatar, avatarColor) { createSuccess ->
+                            if (createSuccess) {
 
                                 val userDataChange = Intent(BROADCAST_USER_DATA_CHANGE)
                                 LocalBroadcastManager.getInstance(this).sendBroadcast(userDataChange)
 
                                 enableSpinner(false)
 
-                                setResult(RESULT_OK, null)
+                                setResult(RESULT_FINISH, null)
                                 finish()
                             } else {
                                 errorToast()
@@ -101,13 +102,13 @@ class CreateUserActivity : AppCompatActivity() {
         }
     }
 
-    fun errorToast(){
-        Toast.makeText(this,"Something went wrong. Please try again.", Toast.LENGTH_SHORT).show()
+    private fun errorToast() {
+        Toast.makeText(this, "Something went wrong. Please try again.", Toast.LENGTH_SHORT).show()
         enableSpinner(false)
     }
 
-    fun enableSpinner(enable: Boolean) {
-        if(enable) {
+    private fun enableSpinner(enable: Boolean) {
+        if (enable) {
             createSpinner.visibility = View.VISIBLE
         } else {
             createSpinner.visibility = View.INVISIBLE
