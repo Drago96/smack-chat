@@ -22,6 +22,14 @@ class LoginActivity : AppCompatActivity() {
         loginSpinner.visibility = View.INVISIBLE
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_EXIT) {
+            if (resultCode == RESULT_FINISH) {
+                finish()
+            }
+        }
+    }
+
     fun loginLoginButtonClicked(view: View) {
         enableSpinner(true)
         hideKeyboard()
@@ -33,7 +41,7 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this,"Please fill in both email and password.", Toast.LENGTH_SHORT).show()
         }
 
-        AuthService.loginUser(this, email, password) { loginSuccess ->
+        AuthService.loginUser( email, password) { loginSuccess ->
             if (loginSuccess) {
                 AuthService.findUserByEmail(this) { findSuccess ->
                     if (findSuccess) {
@@ -80,11 +88,4 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_EXIT) {
-            if (resultCode == RESULT_FINISH) {
-                finish()
-            }
-        }
-    }
 }
