@@ -63,14 +63,14 @@ class MainActivity : AppCompatActivity() {
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver, IntentFilter(BROADCAST_USER_DATA_CHANGE))
         setUpAdapters()
 
-        channel_list.setOnItemClickListener{_, _ , i, _ ->
+        channel_list.setOnItemClickListener { _, _, i, _ ->
             selectedChannel = MessageService.channels[i]
             drawer_layout.closeDrawer(GravityCompat.START)
             updateWithChannel()
         }
 
-        if(App.prefs.isLoggedIn){
-            AuthService.findUserByEmail(this){}
+        if (App.prefs.isLoggedIn) {
+            AuthService.findUserByEmail(this) {}
         }
 
     }
@@ -129,10 +129,10 @@ class MainActivity : AppCompatActivity() {
                     val channelName = nameTextField.text.toString()
                     val channelDesc = descTextField.text.toString()
 
-                    if(channelName.isNotEmpty()){
+                    if (channelName.isNotEmpty()) {
                         socket.emit(SOCKET_NEW_CHANNEL, channelName, channelDesc)
                     } else {
-                        Toast.makeText(this,"Can't create a channel without a name", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Can't create a channel without a name", Toast.LENGTH_SHORT).show()
                     }
 
                 }
@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun sendMessageButtonClicked(view: View) {
-        if(App.prefs.isLoggedIn && messageTextField.text.isNotEmpty() && selectedChannel != null){
+        if (App.prefs.isLoggedIn && messageTextField.text.isNotEmpty() && selectedChannel != null) {
 
             val message = messageTextField.text.toString()
             val userId = UserDataService.id
@@ -172,35 +172,39 @@ class MainActivity : AppCompatActivity() {
                 userImageNavHeader.setBackgroundColor(UserDataService.returnAvatarColor(UserDataService.avatarColor))
                 loginButtonNavHeader.text = "Logout"
 
-                MessageService.getChannels{complete ->
-                    if(complete) {
-                        if(MessageService.channels.count() > 0){
-                            selectedChannel = MessageService.channels[0]
-                            channelAdapter.notifyDataSetChanged()
-                            updateWithChannel()
-                        } else {
-                            mainChannelName.text = "No Channel Selected"
+                Thread{
+                    MessageService.getChannels { complete ->
+                        if (complete) {
+                            if (MessageService.channels.count() > 0) {
+                                selectedChannel = MessageService.channels[0]
+                                channelAdapter.notifyDataSetChanged()
+                                updateWithChannel()
+                            } else {
+                                mainChannelName.text = "No Channel Selected"
+                            }
                         }
+                    }
+                }.start()
+            }
+        }
+    }
+
+    private fun updateWithChannel() {
+        mainChannelName.text = "#${selectedChannel?.name}"
+
+        Thread{
+            selectedChannel?.let {
+                MessageService.getMessages(it.id) { complete ->
+                    if (complete) {
+                        updateMessages()
                     }
                 }
             }
-        }
+        }.start()
     }
 
-    private fun updateWithChannel(){
-        mainChannelName.text = "#${selectedChannel?.name}"
-
-        selectedChannel?.let {
-            MessageService.getMessages(it.id) {complete ->
-                if(complete){
-                    updateMessages()
-                }
-            }
-        }
-    }
-
-    private fun setUpAdapters(){
-        channelAdapter = ArrayAdapter(this,android.R.layout.simple_list_item_1, MessageService.channels)
+    private fun setUpAdapters() {
+        channelAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, MessageService.channels)
         channel_list.adapter = channelAdapter
 
         messageAdapter = MessageAdapter(this, MessageService.messages)
@@ -210,7 +214,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val onNewChannel = Emitter.Listener { args ->
-        if(App.prefs.isLoggedIn){
+        if (App.prefs.isLoggedIn) {
             runOnUiThread {
                 val channelName = args[0] as String
                 val channelDescription = args[1] as String
@@ -224,12 +228,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val onNewMessage = Emitter.Listener {args ->
-        if(App.prefs.isLoggedIn){
+    private val onNewMessage = Emitter.Listener { args ->
+        if (App.prefs.isLoggedIn) {
             runOnUiThread {
                 val channelId = args[2] as String
 
-                if(channelId == selectedChannel?.id){
+                if (channelId == selectedChannel?.id) {
                     val messageBody = args[0] as String
                     val userName = args[3] as String
                     val userAvatar = args[4] as String
@@ -237,7 +241,7 @@ class MainActivity : AppCompatActivity() {
                     val id = args[6] as String
                     val timeStamp = args[7] as String
 
-                    val newMessage = Message(messageBody,userName,channelId,userAvatar,userAvatarColor,id,timeStamp)
+                    val newMessage = Message(messageBody, userName, channelId, userAvatar, userAvatarColor, id, timeStamp)
 
                     MessageService.messages.add(newMessage)
                     updateMessages()
@@ -246,9 +250,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateMessages(){
+    private fun updateMessages() {
         messageAdapter.notifyDataSetChanged()
-        if(messageAdapter.itemCount > 0){
+        if (messageAdapter.itemCount > 0) {
             messageListView.smoothScrollToPosition(messageAdapter.itemCount - 1)
         }
     }

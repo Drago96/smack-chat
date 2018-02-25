@@ -1,10 +1,8 @@
 package com.dragomirproychev.smack.Services
 
-import android.content.Context
 import android.util.Log
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
-import com.android.volley.toolbox.Volley
 import com.dragomirproychev.smack.Controller.App
 import com.dragomirproychev.smack.Model.Channel
 import com.dragomirproychev.smack.Model.Message
